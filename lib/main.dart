@@ -1,3 +1,8 @@
+import 'dart:convert';
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -31,28 +36,53 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-   final TextEditingController _controller = TextEditingController();
+
+  static String socketUrl() {
+    if (kIsWeb) {
+      return "ws://localhost:8080";
+    } else
+    if (Platform.isAndroid) {
+      return "ws://10.0.2.2:8080";
+    } else {
+      return "ws://localhost:8080";
+    }
+  }
   final _channel = WebSocketChannel.connect(
-    Uri.parse('ws://localhost:8080'),
+    Uri.parse(socketUrl()),
   );
   int _counter = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
+  void _sendMessage() {
+    _channel.sink.add("increment");
+  }
+
+  void _resetCounter() {
+    _channel.sink.add("reset");
+  }
+
+  @override
+  void initState() {
+    
+    super.initState();
+    _listen(); // Listen to the WebSocket channel
+  }
+
+  void _listen() {
+    _channel.stream.listen((data) {
+      final message = jsonDecode(data as String);
+      log('Received message: $message');
+      if (message['type'] == 'counter') {
+        setState(() {
+          _counter = message['value'];
+        });
+      }
     });
   }
 
-  void _sendMessage() {
-    if (_controller.text.isNotEmpty) {
-      _channel.sink.add(_controller.text);
-    }
-  }
-
-   @override
+  @override
   void dispose() {
     _channel.sink.close();
-    _controller.dispose();
+
     super.dispose();
   }
 
@@ -63,23 +93,23 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
+      body: Center(
         child: Column(
-       
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Form(child: TextFormField(
-              controller: _controller,
-              decoration: const InputDecoration(labelText: 'Send a message'),
-            ),),
+            Text("You have pushed the button this many times:"),
             const SizedBox(height: 24),
-            StreamBuilder(
-              stream: _channel.stream,
-              builder: (context, snapshot) {
-                return Text(snapshot.hasData ? '${snapshot.data}' : '');
-              },
-            )
+            Text(
+              '$_counter',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _resetCounter,
+              child: const Text('Reset'),
+            ),
+
           ],
         ),
       ),

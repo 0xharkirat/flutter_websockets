@@ -1,16 +1,37 @@
 # flutter_websockets
 
-A new Flutter project.
+This project demonstrates the use of WebSockets in a Flutter application. It includes examples of connecting to a WebSocket server, sending and receiving messages, and handling different WebSocket events. The project aims to provide a clear and concise implementation to help developers integrate WebSocket functionality into their own Flutter applications.
+
+## WebSocket Server
+You can find the Websocket server for this project [here](https://github.com/0xharkirat/websocket-demo)
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This project follows the [Flutter Cookbook: Communicate with WebSockets](https://docs.flutter.dev/cookbook/networking/web-sockets).
 
-A few resources to get you started if this is your first Flutter project:
+## Platform Specific Configuration
+For this project, it is already configured. However, for your own Flutter client in the future, remember to configure it as follows.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### macOS
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+To enable network client access in your macOS application, add the following key to both `macos/Runner/Release.entitlements` and `macos/Runner/Debug.entitlements` files:
+
+```
+<key>com.apple.security.network.client</key>
+<true/>
+```
+
+### Android
+
+For Android, ensure you have the necessary permissions in your `AndroidManifest.xml` file:
+
+```xml
+<manifest ...>
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <application ...>
+    ...
+
+</manifest>
+```
+
