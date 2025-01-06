@@ -2,6 +2,8 @@
 
 This project demonstrates the use of WebSockets in a Flutter application. It includes examples of connecting to a WebSocket server, sending and receiving messages, and handling different WebSocket events. The project aims to provide a clear and concise implementation to help developers integrate WebSocket functionality into their own Flutter applications.
 
+![demo](websockets-demo.gif)
+
 ## WebSocket Server
 You can find the Websocket server for this project [here](https://github.com/0xharkirat/websocket-demo)
 
